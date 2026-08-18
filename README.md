@@ -1,6 +1,6 @@
 # Juice
 
-Juice is an experimental Wine GUI runtime for Windows applications on iPhone and iPad. The bundled Wine runtime is named **Grape**. This repository contains the UIKit app, launch helpers, complete modified Wine 11.13 source, the same Wine delta as an auditable patch, packaging assets, FEX integration, and the build system used to produce Juice TIPAs.
+Juice is an experimental Wine GUI runtime for Windows applications on iPhone and iPad. The bundled Wine runtime is named **Grape**. This repository contains the UIKit app, launch helpers, complete modified Wine 11.13 source, the same Wine delta as an auditable patch, packaging assets, FEX integration, and the build system used to produce Juice.
 
 Juice currently provides:
 
@@ -9,7 +9,6 @@ Juice currently provides:
 - touch-to-Wine pointer input with selectable left and right buttons;
 - direct Windows ARM64 application execution;
 - AMD64/x86-64 execution through ARM64EC Wine and FEX;
-- legacy 32-bit x86 execution through the WoW64/i386 runtime when included in the full build;
 - safe portable ZIP import with adjacent DLLs and assets preserved;
 - fullscreen display;
 - UTF-16 text and Backspace, Tab, and Enter transport to a touched control;
@@ -17,95 +16,93 @@ Juice currently provides:
 - a versioned, non-framebuffer control channel from `wineios.drv` to UIKit for file import and host-routed launches;
 - persistent app and Wine-driver diagnostic logs.
 
-The 2026-08-11 v20 device pass verified ARM64 WineMine, the native JuiceGUI desktop, visible GDI text, UTF-16 edit-control input, FEX-translated x86-64 execution, MSI install/launch/persistence/uninstall, and an ordinary ARM64 setup executable. The deterministic control peer exercised the same versioned request/response protocol used by the UIKit document picker and retained every marker, log, and framebuffer under `proofs/verified/2026-08-11/final-v20/`. A real foreground picker selection is still a manual release check because it requires an unlocked, attended iPad.
-
 ## Supported target
 
-Juice targets rootless-jailbroken ARM64 iPhones and iPads installed through TrollStore. The audited target is an iPad12,1 running iPadOS 16.6 (20G75). Private entitlements and CoreTrust signing are required, so Juice is not App Store compatible.
+Juice targets **non-jailbroken** iOS/iPadOS devices. The app is sideloaded via Xcode, AltStore, or SideStore and requires **JIT** for Wine's dynamic recompilation. No jailbreak, TrollStore, or CoreTrust bypass is needed.
 
-The **primary build host is now x86_64 Linux**. The Linux build cross-compiles the iOS ARM64 app/runtime, ARM64 Windows PE modules, the ARM64EC/FEX x86-64 runtime, and the WoW64/i386 runtime without executing target binaries on the iPhone during compilation.
+JIT is enabled through one of:
+- **Xcode debugging**: attach the Xcode debugger to the app, which grants `CS_DEBUGGED`
+- **SideStore JIT**: use SideStore's JIT enabling feature (AltJIT)
+- **AltStore**: sideload with JIT support enabled
 
-The older on-device build remains available for development and verification, and macOS can still build selected iOS app/launcher pieces, but neither is the primary full-build path anymore.
+The app includes `grape-trace-parent`, a ptrace-based JIT handshake that completes Wine's `PT_TRACE_ME` / `CS_DEBUGGED` handshake, enabling anonymous RWX memory mappings required for JIT compilation.
 
-## Build — primary x86_64 Linux method
+## Build — Xcode (primary method)
 
-A normal build should be run as your regular user, **not with `sudo`**. `sudo` is only needed to install host packages or mount/configure storage.
+Requires macOS with Xcode 15+ and iOS SDK.
 
-On Ubuntu/Debian, install the host dependencies once:
+### Quick build
+
+```sh
+git clone https://github.com/ExoCore-Kernel/Juice.git
+cd Juice
+make xcode
+```
+
+Or open `Juice.xcodeproj` in Xcode and build directly.
+
+### Manual build
+
+```sh
+xcodebuild -project Juice.xcodeproj -scheme Juice -sdk iphoneos -configuration Debug build
+```
+
+### Build without Xcode (macOS or Linux)
+
+```sh
+make app      # Build the iOS app
+make launchers  # Build grape-trace-parent and grape-nested-wrapper
+```
+
+## Build — x86_64 Linux cross-compile
+
+The full Wine runtime can be cross-compiled from x86_64 Linux:
 
 ```sh
 sudo apt install -y \
   build-essential clang lld cmake git python3 bison flex m4 curl file rsync \
   zip unzip xz-utils tar pkg-config autoconf automake libtool \
   libssl-dev libxml2-dev zlib1g-dev
-```
 
-Then clone Juice and build the complete TIPA:
-
-```sh
 git clone https://github.com/ExoCore-Kernel/Juice.git
 cd Juice
 make
 ```
 
-`make` is now the main build target and is equivalent to the complete x86_64 Linux pipeline. It builds:
+This builds the complete runtime including ARM64 Wine, ARM64 Windows PE modules, and the ARM64EC/FEX x86-64 translation layer.
 
-1. the Linux-hosted iOS cross-toolchain;
-2. native ARM64 Grape/Wine for iOS;
-3. ARM64 Windows PE runtime modules;
-4. ARM64EC Wine and FEX for AMD64/x86-64 applications;
-5. the WoW64/i386 runtime for legacy 32-bit x86 applications;
-6. the UIKit Juice app and launch helpers;
-7. the final combined TIPA under `dist/`.
+## Installing and running
 
-The default Linux path automatically fetches its iPhoneOS SDK input and the rootless Procursus FreeType development/runtime files into `build/deps`. Advanced builds can override these with `IOS_SDK` and `JUICE_IOS_ROOTLESS_SYSROOT`.
+### Via Xcode
 
-The build is intentionally incremental. Re-running `make` reuses the iOS toolchain, Wine host tools, configured Wine trees, FEX trees, downloaded toolchains, and already-built objects whenever they are valid. Do not delete `build/` between ordinary retries. Use `JUICE_RECONFIGURE=1 make` only when you deliberately need Wine configure to run again.
+1. Open `Juice.xcodeproj` in Xcode
+2. Select your development team in Signing & Capabilities
+3. Build and run to your connected device
+4. **JIT is required**: while the app is running, attach the debugger from Xcode (Debug → Attach to Process) or use SideStore's JIT enabling
 
-To build only the ARM64 runtime without the x86-64/Win32 compatibility layers:
+### Via SideStore
 
-```sh
-make linux-x86_64
-```
+1. Build the IPA: `xcodebuild -project Juice.xcodeproj -scheme Juice -sdk iphoneos -configuration Release archive`
+2. Export the archive as an IPA
+3. Install via SideStore
+4. Enable JIT through SideStore's JIT feature
 
-To run the full target explicitly instead of the default `make` alias:
+### Wine runtime
 
-```sh
-make linux-x86_64-x64
-```
+The Wine runtime (Grape) must be bundled with the app. Place the compiled Grape runtime in `Juice.app/Grape/` (or `Grape-X64/` for x86-64 support). The runtime contains the Wine loader, server, DLLs, and prefix template.
 
-See [Building on x86_64 Linux](docs/BUILDING-X86_64-LINUX.md) for the full pipeline, storage notes, dependency overrides, and troubleshooting.
+## Repository map
 
-### Building on exFAT or another non-POSIX filesystem
-
-Wine's source/build tree needs POSIX symlinks and filenames that filesystems such as exFAT cannot represent directly. If the large build directory must live on exFAT, mount a POSIXovl view over the storage rather than cloning/building directly on raw exFAT.
-
-Example:
-
-```sh
-sudo apt install -y fuse-posixovl
-mkdir -p ~/winework-posix
-mount.posixovl -S /mnt/Personal/winework ~/winework-posix
-cd ~/winework-posix
-git clone https://github.com/ExoCore-Kernel/Juice.git
-cd Juice
-make
-```
-
-The build scripts invoke repository shell helpers through Bash so POSIX/FUSE overlays do not require executable mode bits to survive on the backing filesystem. The build itself still should not be run with `sudo`.
-
-## Older on-device build
-
-The original rootless iOS/iPadOS build remains supported as an alternative development path:
-
-```sh
-cd Juice
-make preflight
-make device
-make install
-```
-
-This path requires the Procursus toolchain, TrollStore, a rootless jailbreak, FreeType, and the trust-carrier/CoreTrust workflow on the target device. See [Building](docs/BUILDING.md) for the device-specific details.
+- `app`: UIKit GUI, input bridge, file picker, and ZIP extractor.
+- `wine`: complete Wine 11.13 source with the Juice changes already applied.
+- `patches`: the reproducible Wine delta against the recorded upstream commit.
+- `launcher`: source for the trace parent and nested launcher.
+- `toolchain`: iOS compiler wrappers and PE resource-wrapper sources.
+- `scripts`: build, runtime staging, and verification scripts.
+- `config`: entitlements, plists, base revision, pinned toolchain/FEX settings, and runtime module manifest.
+- `packaging`: minimal Wine prefix template.
+- `proofs`: historical frames and diagnostic logs.
+- `legacy`: curated source-only material recovered from the scattered iPad tree; it is provenance, not an active build input.
 
 ## Source integrity
 
@@ -115,30 +112,7 @@ The full Wine tree is based on commit `6eb2e4c32cc9e271856146df11ed3a5c2cf29234`
 make verify
 ```
 
-checks source syntax and safety markers, validates the runtime module manifest, and proves that `patches/wine-ios.patch` reverses cleanly from the included modified Wine tree. This prevents the full tree and standalone patch from silently drifting apart.
-
-## Using Juice
-
-Juice launches directly into its full-screen Wine desktop. Use Install App for an MSI, setup EXE, or portable ZIP; Files opens the persistent imported-files area. Juice preserves ZIP directory trees and launches from the selected executable's directory so adjacent dependencies resolve.
-
-Windows ARM64 runs natively through Grape. AMD64 is detected automatically and routed through the ARM64EC/FEX runtime when that runtime is packaged and enabled. The full Linux build also includes the available WoW64/i386 modules for 32-bit x86 applications. `Grape` and `Grape-X64` remain separate runtime roots so the known-good native ARM64 path is not replaced by the translation path.
-
-See [Portable applications](docs/PORTABLE-APPS.md) and [GUI controls](docs/CONTROLS.md).
-
-## Repository map
-
-- `app`: UIKit GUI, input bridge, file picker, and ZIP extractor.
-- `wine`: complete Wine 11.13 source with the Juice changes already applied.
-- `patches`: the reproducible Wine delta against the recorded upstream commit.
-- `launcher`: source for the trace parent, nested launcher, and trust carrier.
-- `toolchain`: iOS compiler wrappers and PE resource-wrapper sources.
-- `scripts`: x86_64 Linux, device, runtime staging, packaging, install, FEX, and verification scripts.
-- `config`: entitlements, plists, base revision, pinned toolchain/FEX settings, and runtime module manifest.
-- `packaging`: minimal Wine prefix template.
-- `proofs`: historical frames and diagnostic logs.
-- `legacy`: curated source-only material recovered from the scattered iPad tree; it is provenance, not an active build input.
-
-The detailed source reconciliation is in [Device build audit](docs/DEVICE-BUILD-AUDIT.md), and the upstream relationship is in [Wine upstream](docs/UPSTREAM.md).
+checks source syntax and safety markers, validates the runtime module manifest, and proves that `patches/wine-ios.patch` reverses cleanly from the included modified Wine tree.
 
 ## Security and licensing
 

@@ -9,12 +9,11 @@
  * button after the controller has built its form and exports a timestamped
  * snapshot through UIDocumentPickerViewController.
  *
- * Do not hand /var/mobile/Documents URLs directly to UIActivityViewController.
- * Juice is intentionally unsandboxed under TrollStore and those paths are not
- * normal app-container document URLs. Share extensions can require a sandbox
- * extension for every URL they receive, which makes that route unnecessarily
- * fragile. Instead create an immutable snapshot in Juice's temporary directory
- * and ask the system document picker to copy it to the user's chosen location.
+ * Do not hand app-container URLs directly to UIActivityViewController.
+ * Share extensions can require a sandbox extension for every URL they receive,
+ * which makes that route unnecessarily fragile. Instead create an immutable
+ * snapshot in Juice's temporary directory and ask the system document picker
+ * to copy it to the user's chosen location.
  */
 @interface JuiceController : UIViewController
 @end

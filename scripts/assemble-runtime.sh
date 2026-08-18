@@ -98,7 +98,6 @@ cp "$PEBUILD/programs/winemine/aarch64-windows/winemine.exe" \
 "${BASH:-bash}" "$ROOT/scripts/build-launchers.sh"
 cp "$ROOT/build/launchers/grape-trace-parent" \
    "$ROOT/build/launchers/grape-nested-wrapper" \
-   "$ROOT/build/launchers/juice-lowva-helper" \
    "$GRAPE/tools/"
 chmod 755 "$GRAPE/build/wine-ios/server/wineserver" "$GRAPE/build/wine-ios/loader/wine" "$GRAPE/tools/"*
 
@@ -107,4 +106,4 @@ chmod 755 "$GRAPE/build/wine-ios/server/wineserver" "$GRAPE/build/wine-ios/loade
   LC_ALL=C find Grape -type f -print0 | sort -z | xargs -0 sha256sum > RUNTIME-MANIFEST.sha256
 )
 module_count="$(find "$GRAPE/runtime/lib/wine/aarch64-windows" -type f | wc -l | tr -d ' ')"
-echo "JUICE_RUNTIME_ASSEMBLED path=$GRAPE modules=$module_count dwrite_unixlib=$dwrite_unixlib lowva_helper=$GRAPE/tools/juice-lowva-helper"
+echo "JUICE_RUNTIME_ASSEMBLED path=$GRAPE modules=$module_count dwrite_unixlib=$dwrite_unixlib"

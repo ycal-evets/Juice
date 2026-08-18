@@ -19,10 +19,8 @@ elif test "$(uname -s)" = Linux; then
   CC="${CC:-$ROOT/toolchain/juice-ios-cc}"
   export JUICE_IOS_TOOLCHAIN="$IOS_TOOLCHAIN" IOS_SDK="$SDK"
 else
-  JBROOT="${JBROOT:-/var/jb}"
-  SDK="${IOS_SDK:-$JBROOT/usr/share/SDKs/iPhoneOS.sdk}"
-  CC="${CC:-$JBROOT/usr/bin/clang}"
-  target_flags=(-target "arm64-apple-ios$MIN_IOS" -arch arm64 -isysroot "$SDK" "-miphoneos-version-min=$MIN_IOS")
+  echo "Unsupported build host. Use macOS with Xcode or Linux with cross-toolchain." >&2
+  exit 2
 fi
 
 if [[ "$CC" == */* ]]; then
@@ -36,23 +34,16 @@ case "$OUT" in "$ROOT"/build/*) ;; *) test "${JUICE_ALLOW_EXTERNAL_BUILD:-0}" = 
 };; esac
 rm -rf "$OUT"
 mkdir -p "$OUT"
-for source in grape-trace-parent grape-nested-wrapper juice-lowva-helper; do
+for source in grape-trace-parent grape-nested-wrapper; do
   "$CC" "${target_flags[@]}" -O2 "$ROOT/launcher/$source.c" -o "$OUT/$source"
 done
 
 LDID_BIN="${LDID:-}"
-if test -z "$LDID_BIN" && test -x /var/jb/usr/bin/ldid; then LDID_BIN=/var/jb/usr/bin/ldid; fi
 if test -z "$LDID_BIN" && test -n "${JUICE_IOS_TOOLCHAIN:-}" && test -x "$JUICE_IOS_TOOLCHAIN/bin/ldid"; then LDID_BIN="$JUICE_IOS_TOOLCHAIN/bin/ldid"; fi
 if test -z "$LDID_BIN"; then LDID_BIN="$(command -v ldid 2>/dev/null || true)"; fi
 if test -n "$LDID_BIN" && test -x "$LDID_BIN"; then
   for binary in "$OUT/grape-trace-parent" "$OUT/grape-nested-wrapper"; do
     "$LDID_BIN" -S"$ROOT/config/child-entitlements.plist" -Cadhoc "$binary"
   done
-  "$LDID_BIN" -S"$ROOT/config/lowva-helper-entitlements.plist" -Cadhoc "$OUT/juice-lowva-helper"
-  helper_entitlements="$($LDID_BIN -e "$OUT/juice-lowva-helper" 2>/dev/null || true)"
-  printf '%s' "$helper_entitlements" | grep -q 'IOSurfaceRootUserClient' || {
-    echo "Low-VA helper signing is missing IOSurfaceRootUserClient." >&2
-    exit 3
-  }
 fi
-echo "JUICE_LAUNCHERS_BUILD_OK path=$OUT lowva_helper=$OUT/juice-lowva-helper iosurface_entitlement=1"
+echo "JUICE_LAUNCHERS_BUILD_OK path=$OUT"

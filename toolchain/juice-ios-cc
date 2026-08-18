@@ -59,9 +59,6 @@ for arg in "$@"; do
     */dlls/ntdll/unix/virtual.c|dlls/ntdll/unix/virtual.c)
       extra_args=(-include "$ROOT/toolchain/juice-ios-map-tryfixed.h")
       ;;
-    */loader/main.c|loader/main.c)
-      extra_args=(-include "$ROOT/toolchain/juice-ios-lowva-bootstrap.h")
-      ;;
   esac
 
   case "$arg" in

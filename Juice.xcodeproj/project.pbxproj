@@ -1,0 +1,349 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10001000000000000000001 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000001 /* main.m */; };
+		A10001000000000000000002 /* JuiceZip.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000002 /* JuiceZip.m */; };
+		A10001000000000000000003 /* JuicePrefixRepair.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000003 /* JuicePrefixRepair.m */; };
+		A10001000000000000000004 /* JuiceApiSetBootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000004 /* JuiceApiSetBootstrap.m */; };
+		A10001000000000000000005 /* JuiceLegacyWin32.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000005 /* JuiceLegacyWin32.m */; };
+		A10001000000000000000006 /* JuiceLogExport.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000006 /* JuiceLogExport.m */; };
+		A10001000000000000000007 /* JuiceMultiWindowFix.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000007 /* JuiceMultiWindowFix.m */; };
+		A10001000000000000000008 /* JuiceFramebufferFix.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000008 /* JuiceFramebufferFix.m */; };
+		A10001000000000000000009 /* JuiceBootProgress.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000009 /* JuiceBootProgress.m */; };
+		A1000100000000000000000A /* JuiceBootOverlayVisibility.m in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000A /* JuiceBootOverlayVisibility.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A10000000000000000000001 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A10000000000000000000002 /* JuiceZip.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JuiceZip.m; sourceTree = "<group>"; };
+		A10000000000000000000003 /* JuicePrefixRepair.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JuicePrefixRepair.m; sourceTree = "<group>"; };
+		A10000000000000000000004 /* JuiceApiSetBootstrap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JuiceApiSetBootstrap.m; sourceTree = "<group>"; };
+		A10000000000000000000005 /* JuiceLegacyWin32.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JuiceLegacyWin32.m; sourceTree = "<group>"; };
+		A10000000000000000000006 /* JuiceLogExport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JuiceLogExport.m; sourceTree = "<group>"; };
+		A10000000000000000000007 /* JuiceMultiWindowFix.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JuiceMultiWindowFix.m; sourceTree = "<group>"; };
+		A10000000000000000000008 /* JuiceFramebufferFix.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JuiceFramebufferFix.m; sourceTree = "<group>"; };
+		A10000000000000000000009 /* JuiceBootProgress.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JuiceBootProgress.m; sourceTree = "<group>"; };
+		A1000000000000000000000A /* JuiceBootOverlayVisibility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JuiceBootOverlayVisibility.m; sourceTree = "<group>"; };
+		A1000000000000000000000B /* JuiceZip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JuiceZip.h; sourceTree = "<group>"; };
+		A1000000000000000000000C /* JuiceDataDir.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JuiceDataDir.h; sourceTree = "<group>"; };
+		A1000000000000000000000D /* control_protocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = control_protocol.h; path = wine/dlls/wineios.drv/control_protocol.h; sourceTree = "<group>"; };
+		A10000000000000000000010 /* Juice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Juice.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A10002000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A10003000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A10003000000000000000002 /* app */,
+				A10003000000000000000003 /* wine */,
+				A10003000000000000000004 /* config */,
+				A10003000000000000000005 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A10003000000000000000002 /* app */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000001 /* main.m */,
+				A10000000000000000000002 /* JuiceZip.m */,
+				A1000000000000000000000B /* JuiceZip.h */,
+				A1000000000000000000000C /* JuiceDataDir.h */,
+				A10000000000000000000003 /* JuicePrefixRepair.m */,
+				A10000000000000000000004 /* JuiceApiSetBootstrap.m */,
+				A10000000000000000000005 /* JuiceLegacyWin32.m */,
+				A10000000000000000000006 /* JuiceLogExport.m */,
+				A10000000000000000000007 /* JuiceMultiWindowFix.m */,
+				A10000000000000000000008 /* JuiceFramebufferFix.m */,
+				A10000000000000000000009 /* JuiceBootProgress.m */,
+				A1000000000000000000000A /* JuiceBootOverlayVisibility.m */,
+			);
+			path = app;
+			sourceTree = "<group>";
+		};
+		A10003000000000000000003 /* wine */ = {
+			isa = PBXGroup;
+			children = (
+				A1000000000000000000000D /* control_protocol.h */,
+			);
+			path = wine;
+			sourceTree = "<group>";
+		};
+		A10003000000000000000004 /* config */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = config;
+			sourceTree = "<group>";
+		};
+		A10003000000000000000005 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000010 /* Juice.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A10004000000000000000001 /* Juice */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10006000000000000000001 /* Build configuration list for PBXNativeTarget "Juice" */;
+			buildPhases = (
+				A10005000000000000000001 /* Sources */,
+				A10002000000000000000001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Juice;
+			productName = Juice;
+			productReference = A10000000000000000000010 /* Juice.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A10007000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A10004000000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A10006000000000000000002 /* Build configuration list for PBXProject "Juice" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A10003000000000000000001;
+			productRefGroup = A10003000000000000000005 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A10004000000000000000001 /* Juice */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A10005000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10001000000000000000001 /* main.m in Sources */,
+				A10001000000000000000002 /* JuiceZip.m in Sources */,
+				A10001000000000000000003 /* JuicePrefixRepair.m in Sources */,
+				A10001000000000000000004 /* JuiceApiSetBootstrap.m in Sources */,
+				A10001000000000000000005 /* JuiceLegacyWin32.m in Sources */,
+				A10001000000000000000006 /* JuiceLogExport.m in Sources */,
+				A10001000000000000000007 /* JuiceMultiWindowFix.m in Sources */,
+				A10001000000000000000008 /* JuiceFramebufferFix.m in Sources */,
+				A10001000000000000000009 /* JuiceBootProgress.m in Sources */,
+				A1000100000000000000000A /* JuiceBootOverlayVisibility.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A10008000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		A10008000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A10008000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = config/jailed-entitlements.plist;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = config/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arm64;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				OTHER_LDFLAGS = -lz;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exocore.Juice;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A10008000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = config/jailed-entitlements.plist;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = config/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arm64;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				OTHER_LDFLAGS = -lz;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exocore.Juice;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A10006000000000000000001 /* Build configuration list for PBXNativeTarget "Juice" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A10008000000000000000003 /* Debug */,
+				A10008000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A10006000000000000000002 /* Build configuration list for PBXProject "Juice" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A10008000000000000000001 /* Debug */,
+				A10008000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = A10007000000000000000001 /* Project object */;
+}

@@ -9,9 +9,6 @@ PE_BUILD="${JUICE_PE_BUILD:-$ROOT/build/wine-arm64-pe}"
 LOWVA_HEADER="$ROOT/toolchain/juice-ios-map-tryfixed.h"
 LOWVA_OBJECT="$WINE_BUILD/dlls/ntdll/unix/virtual.o"
 LOWVA_STAMP="$WINE_BUILD/.juice-ios-lowva-shim.sha256"
-LOWVA_BOOTSTRAP_HEADER="$ROOT/toolchain/juice-ios-lowva-bootstrap.h"
-LOWVA_BOOTSTRAP_OBJECT="$WINE_BUILD/loader/main.o"
-LOWVA_BOOTSTRAP_STAMP="$WINE_BUILD/.juice-ios-lowva-bootstrap.sha256"
 STATIC_FREETYPE="${JUICE_STATIC_FREETYPE:-1}"
 STATIC_FREETYPE_BUILD="${JUICE_STATIC_FREETYPE_BUILD:-$ROOT/build/freetype-static-ios}"
 STATIC_FREETYPE_LIB="$STATIC_FREETYPE_BUILD/install/lib/libfreetype.a"
@@ -69,18 +66,6 @@ if test -f "$WINE_BUILD/Makefile" && test -f "$LOWVA_HEADER"; then
     echo "JUICE_IOS_LOWVA_OBJECT_REFRESH object=$LOWVA_OBJECT hash=$lowva_hash"
   else
     echo "JUICE_IOS_LOWVA_OBJECT_REUSE object=$LOWVA_OBJECT hash=$lowva_hash"
-  fi
-fi
-
-if test -f "$WINE_BUILD/Makefile" && test -f "$LOWVA_BOOTSTRAP_HEADER"; then
-  bootstrap_hash="$(sha256sum "$LOWVA_BOOTSTRAP_HEADER" | awk '{print $1}')"
-  old_bootstrap_hash="$(cat "$LOWVA_BOOTSTRAP_STAMP" 2>/dev/null || true)"
-  if test "$bootstrap_hash" != "$old_bootstrap_hash"; then
-    rm -f "$LOWVA_BOOTSTRAP_OBJECT" "$WINE_BUILD/loader/wine"
-    printf '%s\n' "$bootstrap_hash" > "$LOWVA_BOOTSTRAP_STAMP"
-    echo "JUICE_IOS_LOWVA_BOOTSTRAP_REFRESH object=$LOWVA_BOOTSTRAP_OBJECT hash=$bootstrap_hash"
-  else
-    echo "JUICE_IOS_LOWVA_BOOTSTRAP_REUSE object=$LOWVA_BOOTSTRAP_OBJECT hash=$bootstrap_hash"
   fi
 fi
 
@@ -165,16 +150,6 @@ x64_stage=""
 if test "${JUICE_BUILD_X64:-0}" = 1; then
   bash "$ROOT/scripts/build-experimental-x86_64-linux.sh"
   x64_stage="${JUICE_X64_RUNTIME_STAGE:-$ROOT/build/x86_64-runtime-stage}"
-fi
-
-export JUICE_REQUIRE_SIGNING=1
-if test -n "$x64_stage"; then
-  export JUICE_X64_RUNTIME_STAGE="$x64_stage"
-fi
-if test -n "$OUTPUT"; then
-  bash "$ROOT/scripts/package-tipa.sh" "$OUTPUT"
-else
-  bash "$ROOT/scripts/package-tipa.sh"
 fi
 
 echo "JUICE_LINUX_X86_64_BUILD_OK x64=${JUICE_BUILD_X64:-0} static_freetype=$STATIC_FREETYPE"

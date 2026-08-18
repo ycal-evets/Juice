@@ -1,6 +1,7 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import "JuiceZip.h"
+#import "JuiceDataDir.h"
 #import "../wine/dlls/wineios.drv/control_protocol.h"
 #import <spawn.h>
 #import <sys/socket.h>
@@ -32,7 +33,7 @@ typedef NS_ENUM(uint16_t, JuicePEMachine) {
  JuicePEMachineARM64EC=0xa641,
 };
 
-static BOOL ReadAll(int fd,void *p,size_t n){char *b=p;while(n){ssize_t r=read(fd,b,n);if(r<=0)return NO;b+=r;n-=r;}return YES;}
+ static BOOL ReadAll(int fd,void *p,size_t n){char *b=p;while(n){ssize_t r=read(fd,b,n);if(r<=0)return NO;b+=r;n-=r;}return YES;}
 static BOOL WriteAll(int fd,const void *p,size_t n){const char *b=p;while(n){ssize_t r=write(fd,p,n);if(r<=0)return NO;p=(const char *)p+r;n-=r;}return YES;}
 static char **CopyStrings(NSArray<NSString *> *a){char **v=calloc(a.count+1,sizeof(char *));for(NSUInteger i=0;i<a.count;i++)v[i]=strdup(a[i].UTF8String);return v;}
 static void FreeStrings(char **v){if(!v)return;for(size_t i=0;v[i];i++)free(v[i]);free(v);}
@@ -107,11 +108,9 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  self.listenFD=self.activeClient=self.controlListenFD=self.controlPickerFD=-1;
  self.child=self.server=-1;
  self.childInput=-1;
- self.persistentLogPath=@"/var/mobile/Documents/Juice-GUI-Headless.log";
+ self.persistentLogPath=[JuiceDataDirectory() stringByAppendingPathComponent:@"Juice-GUI-Headless.log"];
  [@"JUICE_HEADLESS_TEST_BEGIN\n" writeToFile:self.persistentLogPath atomically:YES
   encoding:NSUTF8StringEncoding error:nil];
- [NSFileManager.defaultManager createDirectoryAtPath:@"/var/mobile/Documents/JuiceData"
-  withIntermediateDirectories:YES attributes:nil error:nil];
  [self buildUI];
  [self startDisplayServer];
  [self startControlServer];
@@ -124,7 +123,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  [super viewDidAppear:animated];
  if(self.didAutoLaunch)return;
  self.didAutoLaunch=YES;
- NSString *base=@"/var/mobile/Documents/JuiceData";
+ NSString *base=JuiceDataDirectory();
  NSString *x64Flag=[base stringByAppendingPathComponent:@"RunX64Smoke"];
  NSString *arm64Flag=[base stringByAppendingPathComponent:@"RunARM64Smoke"];
  if([NSFileManager.defaultManager fileExistsAtPath:x64Flag])
@@ -507,7 +506,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
 -(void)sendEnter{[self sendVirtualKey:0x0d name:@"enter"];}
 -(void)append:(NSString *)s{if(!s)return;NSLog(@"JUICE_GUI %@",[s stringByTrimmingCharactersInSet:NSCharacterSet.newlineCharacterSet]);@synchronized(self){NSFileHandle *h=[NSFileHandle fileHandleForWritingAtPath:self.persistentLogPath];if(h){[h seekToEndOfFile];[h writeData:[s dataUsingEncoding:NSUTF8StringEncoding]];[h closeFile];}}dispatch_async(dispatch_get_main_queue(),^{self.log.text=[(self.log.text?:@"") stringByAppendingString:s];[self.log scrollRangeToVisible:NSMakeRange(self.log.text.length,0)];});}
 -(void)startDisplayServer{
- self.socketPath=@"/var/mobile/Documents/JuiceData/juice.sock";unlink(self.socketPath.fileSystemRepresentation);self.listenFD=socket(AF_UNIX,SOCK_STREAM,0);struct sockaddr_un a={0};a.sun_family=AF_UNIX;strncpy(a.sun_path,self.socketPath.fileSystemRepresentation,sizeof(a.sun_path)-1);int br=bind(self.listenFD,(void *)&a,sizeof(a));int lr=br?-1:listen(self.listenFD,8);[self append:[NSString stringWithFormat:@"DISPLAY_SOCKET path=%@ bind=%d listen=%d errno=%d\n",self.socketPath,br,lr,errno]];
+ self.socketPath=[JuiceDataDirectory() stringByAppendingPathComponent:@"juice.sock"];unlink(self.socketPath.fileSystemRepresentation);self.listenFD=socket(AF_UNIX,SOCK_STREAM,0);struct sockaddr_un a={0};a.sun_family=AF_UNIX;strncpy(a.sun_path,self.socketPath.fileSystemRepresentation,sizeof(a.sun_path)-1);int br=bind(self.listenFD,(void *)&a,sizeof(a));int lr=br?-1:listen(self.listenFD,8);[self append:[NSString stringWithFormat:@"DISPLAY_SOCKET path=%@ bind=%d listen=%d errno=%d\n",self.socketPath,br,lr,errno]];
  dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED,0),^{while(1){int fd=accept(self.listenFD,NULL,NULL);if(fd<0)break;@synchronized(self.clients){[self.clients addObject:@(fd)];}[self append:[NSString stringWithFormat:@"DISPLAY_CLIENT_CONNECTED fd=%d\n",fd]];dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED,0),^{[self readClient:fd];});}});
 }
 -(void)sendControlResponseToFD:(int)fd request:(uint32_t)request status:(int32_t)status
@@ -600,7 +599,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
 }
 -(void)startControlServer
 {
- self.controlSocketPath=@"/var/mobile/Documents/JuiceData/juice-control-v1.sock";
+ self.controlSocketPath=[JuiceDataDirectory() stringByAppendingPathComponent:@"juice-control-v1.sock"];
  unlink(self.controlSocketPath.fileSystemRepresentation);
  self.controlListenFD=socket(AF_UNIX,SOCK_STREAM,0);
  struct sockaddr_un address={0};
@@ -636,7 +635,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
 }
 -(void)importPortableZipFromLocalPath:(NSString *)source
 {
- NSString *imports=@"/var/mobile/Documents/JuiceData/Imported";
+ NSString *imports=[JuiceDataDirectory() stringByAppendingPathComponent:@"Imported"];
  NSString *folder=[NSString stringWithFormat:@"%@-%@",source.lastPathComponent.stringByDeletingPathExtension,
                    NSUUID.UUID.UUIDString];
  NSString *destination=[imports stringByAppendingPathComponent:folder];
@@ -723,7 +722,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  }
  if(first)
  {
-  NSString *path=[NSString stringWithFormat:@"/var/mobile/Documents/Juice-frame-%d.png",peerPID];
+   NSString *path=[NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"Juice-frame-%d.png",peerPID]];
   [UIImagePNGRepresentation(image) writeToFile:path atomically:YES];
   [self append:[NSString stringWithFormat:@"JUICE_GUI_FRAME_RECEIVED pid=%d hwnd=0x%llx frame=%dx%d path=%@\n",
    peerPID,(unsigned long long)message.hwnd,message.width,message.height,path]];
@@ -949,9 +948,9 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
     detail:@"Juice accepts .msi, .exe, and .zip files for installation."];
    return;
   }
-  NSString *imports=@"/var/mobile/Documents/JuiceData/Imported";
-  NSError *error=nil;
-  [NSFileManager.defaultManager createDirectoryAtPath:imports withIntermediateDirectories:YES
+   NSString *imports=[JuiceDataDirectory() stringByAppendingPathComponent:@"Imported"];
+   NSError *error=nil;
+   [NSFileManager.defaultManager createDirectoryAtPath:imports withIntermediateDirectories:YES
    attributes:nil error:&error];
   NSString *destination=[imports stringByAppendingPathComponent:name];
   if(!error&&[NSFileManager.defaultManager fileExistsAtPath:destination])
@@ -982,7 +981,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  NSString *name=url.lastPathComponent.length?url.lastPathComponent:@"program.exe";
  NSString *extension=name.pathExtension.lowercaseString;
  NSFileManager *files=NSFileManager.defaultManager;
- NSString *imports=@"/var/mobile/Documents/JuiceData/Imported";
+ NSString *imports=[JuiceDataDirectory() stringByAppendingPathComponent:@"Imported"];
  NSError *directoryError=nil;
  [files createDirectoryAtPath:imports withIntermediateDirectories:YES attributes:nil error:&directoryError];
  if(directoryError)
@@ -1052,7 +1051,7 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
  NSString *runtimeName=self.usingX64?@"Grape-X64":@"Grape";
  NSString *prefixName=self.usingX64?@"GrapePrefix-x86_64":@"GrapePrefix";
  self.grape=[NSBundle.mainBundle.bundlePath stringByAppendingPathComponent:runtimeName];
- NSString *base=@"/var/mobile/Documents/JuiceData";
+ NSString *base=JuiceDataDirectory();
  self.prefix=[base stringByAppendingPathComponent:prefixName];
  NSFileManager *f=NSFileManager.defaultManager;
  [f createDirectoryAtPath:base withIntermediateDirectories:YES attributes:nil error:nil];
@@ -1110,9 +1109,8 @@ static void CopyControlString(char *destination,size_t capacity,NSString *value)
   [@"WINEPREFIX=" stringByAppendingString:self.prefix],
   [@"WINELOADER=" stringByAppendingString:[self.grape stringByAppendingPathComponent:@"tools/grape-nested-wrapper"]],
   [@"WINESERVER=" stringByAppendingString:[b stringByAppendingPathComponent:@"server/wineserver"]],
-  [@"WINEDLLPATH=" stringByAppendingString:[NSString stringWithFormat:@"%@:/var/mobile/Documents/JuiceData/native:%@:%@:%@:%@",pe,[b stringByAppendingPathComponent:@"dlls/crypt32"],[b stringByAppendingPathComponent:@"dlls/wineios.drv"],[b stringByAppendingPathComponent:@"dlls/win32u"],[b stringByAppendingPathComponent:@"dlls/ws2_32"]]],
-  @"DYLD_LIBRARY_PATH=/var/jb/usr/lib",
-  [@"JUICE_IOS_SOCKET=" stringByAppendingString:self.socketPath],
+   [@"WINEDLLPATH=" stringByAppendingString:[NSString stringWithFormat:@"%@:%@:%@:%@:%@:%@",pe,[JuiceDataDirectory() stringByAppendingPathComponent:@"native"],[b stringByAppendingPathComponent:@"dlls/crypt32"],[b stringByAppendingPathComponent:@"dlls/wineios.drv"],[b stringByAppendingPathComponent:@"dlls/win32u"],[b stringByAppendingPathComponent:@"dlls/ws2_32"]]],
+   [@"JUICE_IOS_SOCKET=" stringByAppendingString:self.socketPath],
   [@"JUICE_IOS_CONTROL_SOCKET=" stringByAppendingString:self.controlSocketPath],
   [NSString stringWithFormat:@"JUICE_SKIP_WINEBOOT=%d",self.winebootSwitch.on&&!self.prefixNeedsInitialization],
   [@"WINEDEBUG=" stringByAppendingString:(self.debugField.text.length?self.debugField.text:@"-all")],

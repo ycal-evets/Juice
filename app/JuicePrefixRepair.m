@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 #import <objc/message.h>
+#import "JuiceDataDir.h"
 
 /*
  * Prefix health check for the UIKit launcher.
@@ -50,7 +51,8 @@ static void JuiceRepairPrefixIfNeeded(id self)
 {
     BOOL usingX64 = [JuiceValue(self, @"usingX64") boolValue];
     NSString *prefixName = usingX64 ? @"GrapePrefix-x86_64" : @"GrapePrefix";
-    NSString *prefix = [@"/var/mobile/Documents/JuiceData" stringByAppendingPathComponent:prefixName];
+    NSString *base=JuiceDataDirectory();
+    NSString *prefix = [base stringByAppendingPathComponent:prefixName];
     NSString *ready = [prefix stringByAppendingPathComponent:@".juice-prefix-ready"];
     NSString *manifests = [prefix stringByAppendingPathComponent:@"drive_c/windows/winsxs/manifests"];
     NSFileManager *files = NSFileManager.defaultManager;

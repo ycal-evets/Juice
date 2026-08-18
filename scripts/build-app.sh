@@ -19,10 +19,8 @@ elif test "$(uname -s)" = Linux; then
   CC="${CC:-$ROOT/toolchain/juice-ios-cc}"
   export JUICE_IOS_TOOLCHAIN="$IOS_TOOLCHAIN" IOS_SDK="$SDK"
 else
-  JBROOT="${JBROOT:-/var/jb}"
-  SDK="${IOS_SDK:-$JBROOT/usr/share/SDKs/iPhoneOS.sdk}"
-  CC="${CC:-$JBROOT/usr/bin/clang}"
-  target_flags=(-target "arm64-apple-ios$MIN_IOS" -arch arm64 -isysroot "$SDK" "-miphoneos-version-min=$MIN_IOS")
+  echo "Unsupported build host. Use macOS with Xcode or Linux with cross-toolchain." >&2
+  exit 2
 fi
 
 if [[ "$CC" == */* ]]; then
@@ -43,14 +41,11 @@ mkdir -p "$OUT"
   "$ROOT/app/JuiceLogExport.m" "$ROOT/app/JuiceMultiWindowFix.m" \
   "$ROOT/app/JuiceFramebufferFix.m" "$ROOT/app/JuiceBootProgress.m" \
   "$ROOT/app/JuiceBootOverlayVisibility.m" \
+  -I"$ROOT/app" \
   -framework UIKit -framework Foundation -framework QuartzCore \
   -framework CoreGraphics -lz -o "$OUT/Juice"
 cp "$ROOT/config/Info.plist" "$OUT/Info.plist"
 
-# Generate the icon set from the compact canonical grape artwork data on every
-# build instead of copying pre-rendered PNGs. This avoids stale or partially
-# corrupted binary resources getting carried into a TIPA and guarantees plain
-# 8-bit RGB, non-interlaced PNG output for both the app icon and boot overlay.
 command -v python3 >/dev/null 2>&1 || { echo "python3 is required to generate Juice app icons." >&2; exit 3; }
 python3 "$ROOT/scripts/generate-app-icons.py" "$OUT"
 shopt -s nullglob
@@ -68,7 +63,6 @@ for icon in "${app_icons[@]}"; do
 done
 
 LDID_BIN="${LDID:-}"
-if test -z "$LDID_BIN" && test -x /var/jb/usr/bin/ldid; then LDID_BIN=/var/jb/usr/bin/ldid; fi
 if test -z "$LDID_BIN" && test -n "${JUICE_IOS_TOOLCHAIN:-}" && test -x "$JUICE_IOS_TOOLCHAIN/bin/ldid"; then LDID_BIN="$JUICE_IOS_TOOLCHAIN/bin/ldid"; fi
 if test -z "$LDID_BIN"; then LDID_BIN="$(command -v ldid 2>/dev/null || true)"; fi
 if test -n "$LDID_BIN" && test -x "$LDID_BIN"; then
